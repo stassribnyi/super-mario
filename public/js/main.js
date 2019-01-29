@@ -1,5 +1,5 @@
-import SpriteSheet from './sprite-sheet.js';
-import { loadImage, loadLevel } from './loaders.js';
+import { loadMarioSprites, loadBackgroundSprites } from './sprites.js';
+import { loadLevel } from './loaders.js';
 
 function drawBackground(background, context, sprites) {
   background.ranges.forEach(([x1, x2, y1, y2]) => {
@@ -11,35 +11,36 @@ function drawBackground(background, context, sprites) {
   });
 }
 
-function loadMarioSprites() {
-  return loadImage('/img/characters.gif').then(image => {
-    const sprites = new SpriteSheet(image, 16, 16); // tile sieze is 16 x 16
-    sprites.define('idle', 276, 44, 16, 16);
-
-    return sprites;
-  });
-}
-
-function loadBackgroundSprites() {
-  return loadImage('/img/tiles.png').then(image => {
-    const sprites = new SpriteSheet(image, 16, 16); // tile sieze is 16 x 16
-    sprites.defineTile('ground', 0, 0);
-    sprites.defineTile('sky', 3, 23);
-
-    return sprites;
-  });
-}
-
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
 Promise.all([
   loadBackgroundSprites(),
   loadMarioSprites(),
   loadLevel('1-1')
-]).then(([sprites, loadMarioSprites, level]) => {
+]).then(([sprites, marioSprites, level]) => {
+  const backgroundBuffer = document.createElement('canvas');
+  backgroundBuffer.width = 256;
+  backgroundBuffer.height = 240;
+
   level.backgrounds.forEach(background =>
-    drawBackground(background, context, sprites)
+    drawBackground(background, backgroundBuffer.getContext('2d'), sprites)
   );
 
-  loadMarioSprites.draw('idle', context, 64, 64);
+  const position = {
+    x: 64,
+    y: 64
+  };
+
+  function update() {
+    context.drawImage(backgroundBuffer, 0, 0);
+
+    marioSprites.draw('idle', context, position.x, position.y);
+
+    position.x += 2;
+    position.y += 2;
+
+    requestAnimationFrame(update);
+  }
+
+  update();
 });
