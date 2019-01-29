@@ -1,15 +1,7 @@
 import { loadMarioSprites, loadBackgroundSprites } from './sprites.js';
+import { createBackgroundLayer, createSpriteLayer } from './layers.js';
 import { loadLevel } from './loaders.js';
-
-function drawBackground(background, context, sprites) {
-  background.ranges.forEach(([x1, x2, y1, y2]) => {
-    for (let x = x1; x < x2; x++) {
-      for (let y = y1; y < y2; y++) {
-        sprites.drawTile(background.tile, context, x, y);
-      }
-    }
-  });
-}
+import Compositor from './compositor.js';
 
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
@@ -17,24 +9,25 @@ Promise.all([
   loadBackgroundSprites(),
   loadMarioSprites(),
   loadLevel('1-1')
-]).then(([sprites, marioSprites, level]) => {
-  const backgroundBuffer = document.createElement('canvas');
-  backgroundBuffer.width = 256;
-  backgroundBuffer.height = 240;
-
-  level.backgrounds.forEach(background =>
-    drawBackground(background, backgroundBuffer.getContext('2d'), sprites)
-  );
+]).then(([backgroundSprites, marioSprites, level]) => {
+  const compositor = new Compositor();
 
   const position = {
     x: 64,
     y: 64
   };
 
-  function update() {
-    context.drawImage(backgroundBuffer, 0, 0);
+  const backgroundLayer = createBackgroundLayer(
+    level.backgrounds,
+    backgroundSprites
+  );
+  const spritesLayer = createSpriteLayer(marioSprites, position);
 
-    marioSprites.draw('idle', context, position.x, position.y);
+  compositor.layers.push(backgroundLayer);
+  compositor.layers.push(spritesLayer);
+
+  function update() {
+    compositor.draw(context);
 
     position.x += 2;
     position.y += 2;
