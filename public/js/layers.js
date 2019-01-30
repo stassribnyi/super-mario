@@ -22,10 +22,8 @@ export function createBackgroundLayer(background, sprites) {
   };
 }
 
-export function createSpriteLayer(sprites, position) {
+export function createSpriteLayer(entity) {
   return function drawSpriteLayer(context) {
-    for (let i = 0; i < 6; i++) {
-      sprites.draw('idle', context, position.x + i * 16, position.y);
-    }
+    entity.draw(context);
   };
 }
