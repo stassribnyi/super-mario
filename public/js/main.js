@@ -1,9 +1,10 @@
-import { loadMarioSprites, loadBackgroundSprites } from './sprites.js';
+import { loadBackgroundSprites } from './sprites.js';
 import { createBackgroundLayer, createSpriteLayer } from './layers.js';
-import { loadLevel } from './loaders.js';
 import { createMario } from './entities.js';
+import { loadLevel } from './loaders.js';
 
 import Compositor from './compositor.js';
+import Timer from './timer.js';
 
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
@@ -12,7 +13,7 @@ Promise.all([loadBackgroundSprites(), loadLevel('1-1'), createMario()]).then(
     const compositor = new Compositor();
 
     const gravity = 30;
-    
+
     mario.position.set(64, 180);
     mario.velocity.set(200, -600);
 
@@ -22,29 +23,19 @@ Promise.all([loadBackgroundSprites(), loadLevel('1-1'), createMario()]).then(
     );
     const spritesLayer = createSpriteLayer(mario);
 
-    // compositor.layers.push(backgroundLayer);
+    compositor.layers.push(backgroundLayer);
     compositor.layers.push(spritesLayer);
 
-    let deltaTime = 0;
-    let lastTime = 0;
+    const timer = new Timer();
 
-    function update(time) {
-      deltaTime = (time - lastTime) / 1000;
-    //   console.log(deltaTime, time);
-
+    timer.update = function update(deltaTime) {
       compositor.draw(context);
 
       mario.update(deltaTime);
-       console.log(mario.position);
 
       mario.velocity.y += gravity;
+    };
 
-      requestAnimationFrame(update);
-      //   setTimeout(update, 1000 / 145);
-
-      lastTime = time;
-    }
-
-    update(0);
+    timer.start();
   }
 );
