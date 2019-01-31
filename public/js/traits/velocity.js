@@ -6,7 +6,7 @@ export class Velocity extends Trait {
   }
 
   update(entity, deltaTime) {
-    entity.position.x += entity.velocity.x * deltaTime;
-    entity.position.y += entity.velocity.y * deltaTime;
+    entity.positionVector.x += entity.velocityVector.x * deltaTime;
+    entity.positionVector.y += entity.velocityVector.y * deltaTime;
   }
 }

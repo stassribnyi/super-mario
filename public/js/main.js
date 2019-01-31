@@ -15,8 +15,8 @@ Promise.all([loadBackgroundSprites(), loadLevel('1-1'), createMario()]).then(
 
     const gravity = 2000;
 
-    mario.position.set(64, 180);
-    mario.velocity.set(200, -600);
+    mario.positionVector.set(64, 180);
+    mario.velocityVector.set(200, -600);
 
     const SPACE = 32;
     const input = new Keyboard();
@@ -46,7 +46,7 @@ Promise.all([loadBackgroundSprites(), loadLevel('1-1'), createMario()]).then(
 
       mario.update(deltaTime);
 
-      mario.velocity.y += gravity * deltaTime;
+      mario.velocityVector.y += gravity * deltaTime;
     };
 
     timer.start();
