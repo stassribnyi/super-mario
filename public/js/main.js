@@ -7,13 +7,6 @@ import Keyboard from './keyboard-state.js';
 import Compositor from './compositor.js';
 import Timer from './timer.js';
 
-const input = new Keyboard();
-
-input.addMapping(32, keyState => {
-  console.log(keyState);
-});
-input.listenTo(window);
-
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d');
 Promise.all([loadBackgroundSprites(), loadLevel('1-1'), createMario()]).then(
@@ -24,6 +17,18 @@ Promise.all([loadBackgroundSprites(), loadLevel('1-1'), createMario()]).then(
 
     mario.position.set(64, 180);
     mario.velocity.set(200, -600);
+
+    const SPACE = 32;
+    const input = new Keyboard();
+
+    input.addMapping(SPACE, keyState => {
+      if (keyState) {
+        mario.jump.start();
+      } else {
+        mario.jump.cancel();
+      }
+    });
+    input.listenTo(window);
 
     const backgroundLayer = createBackgroundLayer(
       level.backgrounds,
