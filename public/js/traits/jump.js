@@ -19,7 +19,7 @@ export class Jump extends Trait {
 
   update(entity, deltaTime) {
     if (this.engageTime > 0) {
-      entity.velocity.y = -this.velocity;
+      entity.velocityVector.y = -this.velocity;
       this.engageTime -= deltaTime;
     }
   }
