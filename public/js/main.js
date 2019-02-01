@@ -10,7 +10,7 @@ Promise.all([loadLevel('1-1'), createMario()]).then(([level, mario]) => {
   const gravity = 2000;
 
   mario.positionVector.set(64, 180);
-  mario.velocityVector.set(200, -600);
+  mario.velocityVector.set(0, -600);
 
   level.entities.add(mario);
 
@@ -29,9 +29,9 @@ Promise.all([loadLevel('1-1'), createMario()]).then(([level, mario]) => {
   const timer = new Timer();
 
   timer.update = function update(deltaTime) {
-    level.compositor.draw(context);
+    level.update(deltaTime);
 
-    mario.update(deltaTime);
+    level.compositor.draw(context);
 
     mario.velocityVector.y += gravity * deltaTime;
   };
