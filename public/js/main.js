@@ -1,3 +1,4 @@
+import { createCollisionLayer } from './layers.js';
 import { createMario } from './entities.js';
 import { loadLevel } from './loaders.js';
 
@@ -13,6 +14,8 @@ Promise.all([loadLevel('1-1'), createMario()]).then(([level, mario]) => {
   mario.velocityVector.set(0, -600);
 
   level.entities.add(mario);
+
+  createCollisionLayer(level);
 
   const SPACE = 32;
   const input = new Keyboard();
