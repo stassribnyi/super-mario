@@ -15,8 +15,11 @@ export default class TileResolver {
       return undefined;
     }
 
+    const y1 = indexY * this.tileSize;
+
     return {
-      tile
+      tile,
+      y1
     };
   }
 
