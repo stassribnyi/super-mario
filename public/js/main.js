@@ -30,8 +30,10 @@ Promise.all([loadLevel('1-1'), createMario()]).then(([level, mario]) => {
 
   ['mousedown', 'mousemove'].forEach(eventName => {
     canvas.addEventListener(eventName, event => {
-      mario.velocityVector.set(0, 0);
-      mario.positionVector.set(event.offsetX, event.offsetY);
+      if (event.buttons === 1) {
+        mario.velocityVector.set(0, 0);
+        mario.positionVector.set(event.offsetX, event.offsetY);
+      }
     });
   });
 
