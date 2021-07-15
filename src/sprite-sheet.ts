@@ -12,14 +12,10 @@ export default class SpriteSheet {
             .getContext('2d')
             .drawImage(
                 this.image,
-                x,
-                y,
-                width,
-                height,
-                0,
-                0,
-                width,
-                height
+                x, y,
+                width, height,
+                0, 0,
+                width, height
             );
 
         this.tiles.set(name, buffer);

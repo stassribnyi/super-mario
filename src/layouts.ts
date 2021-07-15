@@ -1,11 +1,7 @@
 import { LayerDrawer } from './compositor.js';
+import Entity from './entity.js';
 import { Background } from './loaders.js';
 import SpriteSheet from './sprite-sheet.js';
-
-export interface Position {
-  x: number;
-  y: number;
-}
 
 const drawBackground = (
   background: Background,
@@ -35,6 +31,6 @@ export const createBackgroundLayer = (
 };
 
 export const createSpriteLayer =
-  (sprite: SpriteSheet, position: Position): LayerDrawer =>
+  (entity: Entity): LayerDrawer =>
     (context) =>
-      sprite.draw('idle', context, position.x, position.y);
+      entity.draw(context);
