@@ -3,11 +3,11 @@ import { loadLevel } from './loaders.js';
 import { loadBackgroundSprites } from './sprites.js';
 import Compositor from './compositor.js';
 import Timer from './timer.js';
+import Keyboard, { KeyState } from './keyboard-state.js';
 import { createMario } from './entities.js';
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const context = canvas.getContext('2d');
-
 
 Promise.all([
     loadBackgroundSprites(),
@@ -21,17 +21,26 @@ Promise.all([
     compositor.addLayer(backgroundLayer);
     compositor.addLayer(spriteLayer);
 
-    const gravity = 30;
+    const gravity = 2000;
 
-    mario.setPosition(64, 160);
-    mario.setVelocity(200, -600);
+    mario.setPosition(74, 50);
+
+    const input = new Keyboard();
+    input.listenTo(window);
+    input.addMapping('Space', (state) => {
+        if (state === KeyState.Pressed) {
+            mario.jump.start();
+        } else {
+            mario.jump.cancel();
+        }
+    })
 
     const timer = new Timer();
 
     timer.setTick((deltaTime) => {
-        compositor.draw(context);
         mario.update(deltaTime);
-        mario.vel.y += gravity;
+        compositor.draw(context);
+        mario.vel.y += gravity * deltaTime;
     });
 
     timer.start();
