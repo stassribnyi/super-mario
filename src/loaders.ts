@@ -1,10 +1,15 @@
+import { createBackgroundLayer, createSpriteLayer } from './layouts.js';
+import { loadBackgroundSprites } from './sprites.js';
+import Level from './level.js';
+import Compositor from './compositor.js';
+
 export type BackgroundRange = [number, number, number, number];
 
 export interface Background {
     readonly tile: string;
     readonly ranges: Array<BackgroundRange>
 }
-export interface Level {
+export interface LevelSpec {
     readonly backgrounds: Array<Background>
 }
 
@@ -19,5 +24,20 @@ export const loadImage =
 
 export const loadLevel =
     (level: string): Promise<Level> =>
-        fetch(`/public/levels/${level}.json`)
-            .then((response) => response.json());
+        Promise.all([
+            fetch(`/public/levels/${level}.json`)
+                .then((response) => response.json() as Promise<LevelSpec>),
+            loadBackgroundSprites()
+        ])
+            .then(([levelSpec, sprites]) => {
+                const compositor = new Compositor();
+                const level = new Level(compositor);
+
+                const backgroundLayer = createBackgroundLayer(levelSpec.backgrounds, sprites);
+                const spriteLayer = createSpriteLayer(level.entities);
+
+                compositor.addLayer(backgroundLayer);
+                compositor.addLayer(spriteLayer);
+
+                return level;
+            });

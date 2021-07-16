@@ -10,16 +10,10 @@ const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const context = canvas.getContext('2d');
 
 Promise.all([
-    loadBackgroundSprites(),
     createMario(),
     loadLevel('1-1')
-]).then(([bgSprites, mario, { backgrounds }]) => {
-    const backgroundLayer = createBackgroundLayer(backgrounds, bgSprites);
-    const spriteLayer = createSpriteLayer(mario);
-
-    const compositor = new Compositor();
-    compositor.addLayer(backgroundLayer);
-    compositor.addLayer(spriteLayer);
+]).then(([mario, level]) => {
+    level.entities.add(mario);
 
     const gravity = 2000;
 
@@ -38,9 +32,9 @@ Promise.all([
     const timer = new Timer();
 
     timer.setTick((deltaTime) => {
-        mario.update(deltaTime);
-        compositor.draw(context);
-        mario.vel.y += gravity * deltaTime;
+        level.update(deltaTime);
+        level.draw(context);
+        mario.setVelocity(mario.vel.x, mario.vel.y + gravity * deltaTime);
     });
 
     timer.start();

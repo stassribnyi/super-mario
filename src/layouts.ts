@@ -1,5 +1,6 @@
 import { LayerDrawer } from './compositor.js';
 import Entity from './entity.js';
+import Level from './level.js';
 import { Background } from './loaders.js';
 import SpriteSheet from './sprite-sheet.js';
 
@@ -31,6 +32,6 @@ export const createBackgroundLayer = (
 };
 
 export const createSpriteLayer =
-  (entity: Entity): LayerDrawer =>
+  (entities: Level['entities']): LayerDrawer =>
     (context) =>
-      entity.draw(context);
+      entities.forEach(entity => entity.draw(context));

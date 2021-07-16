@@ -4,7 +4,7 @@ import { loadMarioSprites } from './sprites.js';
 import { Jump, Velocity } from './traits/index.js';
 
 export class Mario extends Entity {
-    constructor(private sprite: SpriteSheet) {
+    constructor(private readonly sprite: SpriteSheet) {
         super();
     }
 

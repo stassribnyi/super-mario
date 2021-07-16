@@ -11,10 +11,10 @@ export abstract class Trait {
 export default abstract class Entity {
     [key: string]: any;
 
-    private traits = new Map<Trait['name'], Trait>();
+    private readonly traits = new Map<Trait['name'], Trait>();
 
-    pos = new Vector(0, 0);
-    vel = new Vector(0, 0);
+    readonly pos = new Vector(0, 0);
+    readonly vel = new Vector(0, 0);
 
     abstract draw(context: CanvasRenderingContext2D): void;
 

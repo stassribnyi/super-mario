@@ -9,12 +9,12 @@ export default class KeyboardState {
   /**
    * holds the current state of a given key
    */
-  private keyStates = new Map<KeyboardEvent['key'], KeyState>();
+  private readonly keyStates = new Map<KeyboardEvent['key'], KeyState>();
 
   /**
    * holds the callback function of a given key
    */
-  private keyMap = new Map<KeyboardEvent['key'], KeydownEventHandler>();
+  private readonly keyMap = new Map<KeyboardEvent['key'], KeydownEventHandler>();
 
   constructor() { }
 

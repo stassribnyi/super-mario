@@ -5,7 +5,7 @@ export default class Timer {
     private accumulatedTime = 0;
     private lastTime = 0;
 
-    constructor(private deltaTime: number = 1 / 60) { }
+    constructor(private readonly deltaTime: number = 1 / 60) { }
 
     start() {
         this.enqueue();

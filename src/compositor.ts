@@ -1,7 +1,7 @@
 export type LayerDrawer = (context: CanvasRenderingContext2D) => void;
 
 export default class Compositor {
-    private layers = new Set<LayerDrawer>();
+    private readonly layers = new Set<LayerDrawer>();
 
     addLayer(layer: LayerDrawer) {
         this.layers.add(layer);

@@ -1,5 +1,5 @@
 export default class SpriteSheet {
-    private tiles = new Map<string, HTMLCanvasElement>();
+    private readonly tiles = new Map<string, HTMLCanvasElement>();
 
     constructor(private image: HTMLImageElement, private width: number, private height: number) { }
 

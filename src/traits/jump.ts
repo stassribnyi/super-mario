@@ -4,10 +4,9 @@ export default class Jump extends Trait {
     private velocity = 200;
     private engageTime = 0;
     private readonly duration = 0.2;
-    static readonly NAME = 'jump';
 
     constructor() {
-        super(Jump.NAME)
+        super('jump')
     }
 
     start(): void {
