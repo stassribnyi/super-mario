@@ -4,6 +4,11 @@ export enum KeyState {
 }
 
 type KeydownEventHandler = (state: KeyState) => void;
+type KeyboardCode =
+  | 'Space'
+  | 'ArrowUp'
+  | 'ArrowLeft'
+  | 'ArrowRight';
 
 export default class KeyboardState {
   /**
@@ -18,7 +23,7 @@ export default class KeyboardState {
 
   constructor() { }
 
-  addMapping(code: KeyboardEvent['code'], callback: KeydownEventHandler): void {
+  addMapping(code: KeyboardCode, callback: KeydownEventHandler): void {
     this.keyMap.set(code, callback)
   }
 

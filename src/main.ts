@@ -1,54 +1,19 @@
 import { loadLevel } from './loaders.js';
 import Timer from './timer.js';
-import Keyboard, { KeyState } from './keyboard-state.js';
 import { createMario } from './entities.js';
+import { setupKeyboard } from './input.js';
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const context = canvas.getContext('2d');
 
 Promise.all([
-    createMario(),
+    createMario(74, 50),
     loadLevel('1-1')
 ]).then(([mario, level]) => {
     level.entities.add(mario);
 
-    const gravity = 2000;
-
-    mario.setPosition(74, 50);
-
-    const input = new Keyboard();
+    const input = setupKeyboard(mario);
     input.listenTo(window);
-    input.addMapping('ArrowUp', (state) => {
-        if (state === KeyState.Pressed) {
-            mario.jump.start();
-        } else {
-            mario.jump.cancel();
-        }
-    });
-
-    input.addMapping('Space', (state) => {
-        if (state === KeyState.Pressed) {
-            mario.jump.start();
-        } else {
-            mario.jump.cancel();
-        }
-    });
-
-    input.addMapping('ArrowLeft', (state) => {
-        if (state === KeyState.Pressed) {
-            mario.run.start('backward');
-        } else {
-            mario.run.cancel();
-        }
-    });
-
-    input.addMapping('ArrowRight', (state) => {
-        if (state === KeyState.Pressed) {
-            mario.run.start('forward');
-        } else {
-            mario.run.cancel();
-        }
-    });
 
     ['mousedown', 'mousemove'].forEach(eventName => {
         canvas.addEventListener(eventName, (event: MouseEvent) => {
@@ -64,7 +29,6 @@ Promise.all([
     timer.setTick((deltaTime) => {
         level.update(deltaTime);
         level.draw(context);
-        mario.setVelocity(mario.vel.x, mario.vel.y + gravity * deltaTime);
     });
 
     timer.start();

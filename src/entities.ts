@@ -14,11 +14,13 @@ export class Mario extends Entity {
     }
 }
 
-export const createMario = async () => {
+export const createMario = async (x: number = 16, y: number = 16) => {
     const sprite = await loadMarioSprites();
     const mario = new Mario(sprite);
     mario.addTrait(new Run());
     mario.addTrait(new Jump());
+
+    mario.setPosition(x, y);
 
     return mario;
 }

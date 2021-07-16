@@ -8,6 +8,7 @@ export interface LevelTile {
 
 export default class Level {
     readonly entities = new Set<Entity>();
+    private gravity = 2000;
 
     constructor(private compositor: Compositor, private tileCollider: TileCollider) { }
 
@@ -19,11 +20,13 @@ export default class Level {
         this.entities.forEach(entity => {
             entity.update(deltaTime);
 
-            entity.pos.x = entity.pos.x + entity.vel.x * deltaTime;
+            entity.setPosition(entity.pos.x + entity.vel.x * deltaTime, entity.pos.y);
             this.tileCollider.checkX(entity);
 
-            entity.pos.y = entity.pos.y + entity.vel.y * deltaTime;
+            entity.setPosition(entity.pos.x, entity.pos.y + entity.vel.y * deltaTime);
             this.tileCollider.checkY(entity);
+
+            entity.setVelocity(entity.vel.x, entity.vel.y + this.gravity * deltaTime);
         });
     }
 }
