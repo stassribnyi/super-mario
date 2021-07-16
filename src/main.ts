@@ -1,7 +1,4 @@
-import { createBackgroundLayer, createSpriteLayer } from './layouts.js';
 import { loadLevel } from './loaders.js';
-import { loadBackgroundSprites } from './sprites.js';
-import Compositor from './compositor.js';
 import Timer from './timer.js';
 import Keyboard, { KeyState } from './keyboard-state.js';
 import { createMario } from './entities.js';

@@ -1,10 +1,15 @@
 import Compositor from './compositor.js';
 import Entity from './entity.js';
+import { Matrix } from './math.js';
+
+export interface LevelTile {
+    readonly name: string;
+}
 
 export default class Level {
     readonly entities = new Set<Entity>();
 
-    constructor(private compositor: Compositor) { }
+    constructor(private compositor: Compositor, private tiles: Matrix<LevelTile>) { }
 
     draw(context: CanvasRenderingContext2D): void {
         this.compositor.draw(context);
