@@ -1,8 +1,33 @@
 import { LayerDrawer } from './compositor.js';
+import Entity from './entity.js';
 import Level, { LevelTile } from './level.js';
 import { Matrix, Vector } from './math.js';
 import SpriteSheet from './sprite-sheet.js';
 import TileResolver from './tile-resolver.js';
+
+function drawCollision(
+  context: CanvasRenderingContext2D,
+  color: CanvasRenderingContext2D['strokeStyle'],
+  x: number, y: number,
+  size: number
+): void;
+function drawCollision(
+  context: CanvasRenderingContext2D,
+  color: CanvasRenderingContext2D['strokeStyle'],
+  x: number, y: number,
+  width: number, height: number
+): void;
+function drawCollision(
+  context: CanvasRenderingContext2D,
+  color: CanvasRenderingContext2D['strokeStyle'],
+  x: number, y: number,
+  width: number, height?: number
+): void {
+  context.strokeStyle = color;
+  context.beginPath();
+  context.rect(x, y, width, height !== undefined ? height : width);
+  context.stroke();
+}
 
 export const createBackgroundLayer = (
   tiles: Matrix<LevelTile>,
@@ -25,7 +50,7 @@ export const createSpriteLayer =
       entities.forEach(entity => entity.draw(context));
 
 export const createCollisionLayer =
-  (tileResolver: TileResolver): LayerDrawer => {
+  (entities: Set<Entity>, tileResolver: TileResolver): LayerDrawer => {
     const resolvedTiles = new Set<Vector>();
     const getByIndexOriginal = tileResolver.getByIndex;
     const tileSize = tileResolver.tileSize;
@@ -37,14 +62,14 @@ export const createCollisionLayer =
     }
 
     return (context) => {
-      context.strokeStyle = 'red';
-
       resolvedTiles.forEach(({ x, y }) => {
-        context.beginPath();
-        context.rect(x, y, tileSize, tileSize);
-        context.stroke();
+        drawCollision(context, 'blue', x, y, tileSize);
       });
 
       resolvedTiles.clear();
+
+      entities.forEach(({ pos, size }) => {
+        drawCollision(context, 'red', pos.x, pos.y, size.x, size.y);
+      });
     }
   }

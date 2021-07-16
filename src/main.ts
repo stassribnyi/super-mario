@@ -26,6 +26,14 @@ Promise.all([
         }
     });
 
+    input.addMapping('Space', (state) => {
+        if (state === KeyState.Pressed) {
+            mario.jump.start();
+        } else {
+            mario.jump.cancel();
+        }
+    });
+
     input.addMapping('ArrowLeft', (state) => {
         if (state === KeyState.Pressed) {
             mario.run.start('backward');

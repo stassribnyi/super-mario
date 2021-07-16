@@ -15,6 +15,7 @@ export default abstract class Entity {
 
     readonly pos = new Vector(0, 0);
     readonly vel = new Vector(0, 0);
+    readonly size = new Vector(0, 0);
 
     abstract draw(context: CanvasRenderingContext2D): void;
 
@@ -29,6 +30,10 @@ export default abstract class Entity {
 
     setVelocity(x: number, y: number): void {
         this.vel.set(x, y);
+    }
+
+    setSize(x: number, y: number): void {
+        this.size.set(x, y);
     }
 
     update(deltaTime: number): void {

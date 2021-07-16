@@ -59,7 +59,7 @@ export const loadLevel =
 
                 const backgroundLayer = createBackgroundLayer(tiles, sprites);
                 const spriteLayer = createSpriteLayer(level.entities);
-                const collisionLayer = createCollisionLayer(tileResolver);
+                const collisionLayer = createCollisionLayer(level.entities, tileResolver);
 
                 compositor.addLayer(backgroundLayer);
                 compositor.addLayer(spriteLayer);
