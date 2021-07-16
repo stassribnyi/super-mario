@@ -1,8 +1,10 @@
-import { createBackgroundLayer, createSpriteLayer } from './layouts.js';
+import { createBackgroundLayer, createCollisionLayer, createSpriteLayer } from './layouts.js';
 import { loadBackgroundSprites } from './sprites.js';
 import Level, { LevelTile } from './level.js';
 import Compositor from './compositor.js';
 import { Matrix } from './math.js';
+import TileCollider from './tile-collider.js';
+import TileResolver from './tile-resolver.js';
 
 export type BackgroundRange = [number, number, number, number];
 
@@ -48,14 +50,20 @@ export const loadLevel =
         ])
             .then(([levelSpec, sprites]) => {
                 const compositor = new Compositor();
-                const tiles = createTiles(levelSpec.backgrounds)
-                const level = new Level(compositor, tiles);
+                const tiles = createTiles(levelSpec.backgrounds);
+
+                const tileResolver = new TileResolver(tiles);
+                const tileCollider = new TileCollider(tileResolver);
+
+                const level = new Level(compositor, tileCollider);
 
                 const backgroundLayer = createBackgroundLayer(tiles, sprites);
                 const spriteLayer = createSpriteLayer(level.entities);
+                const collisionLayer = createCollisionLayer(tileResolver);
 
                 compositor.addLayer(backgroundLayer);
                 compositor.addLayer(spriteLayer);
+                compositor.addLayer(collisionLayer);
 
                 return level;
             });

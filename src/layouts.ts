@@ -1,7 +1,8 @@
 import { LayerDrawer } from './compositor.js';
 import Level, { LevelTile } from './level.js';
-import { Matrix } from './math.js';
+import { Matrix, Vector } from './math.js';
 import SpriteSheet from './sprite-sheet.js';
+import TileResolver from './tile-resolver.js';
 
 export const createBackgroundLayer = (
   tiles: Matrix<LevelTile>,
@@ -22,3 +23,28 @@ export const createSpriteLayer =
   (entities: Level['entities']): LayerDrawer =>
     (context) =>
       entities.forEach(entity => entity.draw(context));
+
+export const createCollisionLayer =
+  (tileResolver: TileResolver): LayerDrawer => {
+    const resolvedTiles = new Set<Vector>();
+    const getByIndexOriginal = tileResolver.getByIndex;
+    const tileSize = tileResolver.tileSize;
+
+    tileResolver.getByIndex = (indexX, indexY) => {
+      resolvedTiles.add(new Vector(indexX * tileSize, indexY * tileSize));
+
+      return getByIndexOriginal.call(tileResolver, indexX, indexY);
+    }
+
+    return (context) => {
+      context.strokeStyle = 'red';
+
+      resolvedTiles.forEach(({ x, y }) => {
+        context.beginPath();
+        context.rect(x, y, tileSize, tileSize);
+        context.stroke();
+      });
+
+      resolvedTiles.clear();
+    }
+  }

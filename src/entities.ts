@@ -1,7 +1,7 @@
 import SpriteSheet from './sprite-sheet.js';
 import Entity from './entity.js';
 import { loadMarioSprites } from './sprites.js';
-import { Jump, Velocity } from './traits/index.js';
+import { Jump, Run, Velocity } from './traits/index.js';
 
 export class Mario extends Entity {
     constructor(private readonly sprite: SpriteSheet) {
@@ -16,8 +16,9 @@ export class Mario extends Entity {
 export const createMario = async () => {
     const sprite = await loadMarioSprites();
     const mario = new Mario(sprite);
-    mario.addTrait(new Velocity())
-    mario.addTrait(new Jump())
+    mario.addTrait(new Velocity());
+    mario.addTrait(new Jump());
+    mario.addTrait(new Run());
 
     return mario;
 }

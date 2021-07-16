@@ -18,12 +18,37 @@ Promise.all([
 
     const input = new Keyboard();
     input.listenTo(window);
-    input.addMapping('Space', (state) => {
+    input.addMapping('ArrowUp', (state) => {
         if (state === KeyState.Pressed) {
             mario.jump.start();
         } else {
             mario.jump.cancel();
         }
+    });
+
+    input.addMapping('ArrowLeft', (state) => {
+        if (state === KeyState.Pressed) {
+            mario.run.start('backward');
+        } else {
+            mario.run.cancel();
+        }
+    });
+
+    input.addMapping('ArrowRight', (state) => {
+        if (state === KeyState.Pressed) {
+            mario.run.start('forward');
+        } else {
+            mario.run.cancel();
+        }
+    });
+
+    ['mousedown', 'mousemove'].forEach(eventName => {
+        canvas.addEventListener(eventName, (event: MouseEvent) => {
+            if (event.buttons === 1) {
+                mario.setVelocity(0, 0);
+                mario.setPosition(event.clientX, event.clientY);
+            }
+        })
     })
 
     const timer = new Timer();
