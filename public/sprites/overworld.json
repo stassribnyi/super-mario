@@ -1,0 +1,27 @@
+{
+  "imageUrl": "/public/img/tiles.png",
+  "tileWidth": 16,
+  "tileHeight": 16,
+  "tiles": [
+    {
+      "name": "ground",
+      "position": [0, 0]
+    },
+    {
+      "name": "sky",
+      "position": [3, 23]
+    },
+    {
+      "name": "chocolate",
+      "position": [0, 1]
+    },
+    {
+      "name": "bricks",
+      "position": [1, 0]
+    },
+    {
+      "name": "chance",
+      "position": [24, 0]
+    }
+  ]
+}

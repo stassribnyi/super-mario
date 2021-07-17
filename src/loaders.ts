@@ -1,23 +1,33 @@
 import { createBackgroundLayer, createCollisionLayer, createSpriteLayer } from './layouts.js';
-import { loadBackgroundSprites } from './sprites.js';
 import Level, { LevelTile } from './level.js';
 import Compositor from './compositor.js';
 import { Matrix } from './math.js';
 import TileCollider from './tile-collider.js';
 import TileResolver from './tile-resolver.js';
+import SpriteSheet from './sprite-sheet.js';
 
 export type BackgroundRange =
     | [number, number]
     | [number, number, number]
     | [number, number, number, number];
 
+export interface SpriteSheetSpec {
+    readonly imageUrl: string;
+    readonly tileWidth: number;
+    readonly tileHeight: number;
+    readonly tiles: Array<{
+        readonly name: string;
+        readonly position: [x: number, y: number];
+    }>
+}
 export interface Background {
     readonly tile: string;
     readonly type: string;
     readonly ranges: Array<BackgroundRange>
 }
 export interface LevelSpec {
-    readonly backgrounds: Array<Background>
+    readonly spriteSheet: string;
+    readonly backgrounds: Array<Background>;
 }
 
 export const loadImage =
@@ -28,6 +38,9 @@ export const loadImage =
             image.addEventListener('load', () => resolve(image));
             image.src = url;
         });
+
+const loadJSON = <T extends object>(url: string): Promise<T> =>
+    fetch(url).then((response) => response.json() as Promise<T>);
 
 const createTiles = (backgrounds: LevelSpec['backgrounds']): Matrix<LevelTile> => {
     const tiles = new Matrix<LevelTile>();
@@ -64,29 +77,49 @@ const createTiles = (backgrounds: LevelSpec['backgrounds']): Matrix<LevelTile> =
     return tiles;
 }
 
+const loadSpriteSheet = async (name: string): Promise<SpriteSheet> => {
+    const {
+        imageUrl,
+        tiles,
+        tileHeight,
+        tileWidth
+    } = await loadJSON<SpriteSheetSpec>(`/public/sprites/${name}.json`);
+
+    const image = await loadImage(imageUrl);
+
+    const sprites = new SpriteSheet(image, tileWidth, tileHeight);
+    tiles.forEach(({ name: tileName, position: [x, y] }) =>
+        sprites.defineTile(tileName, x, y)
+    );
+
+    return sprites;
+
+}
+
 export const loadLevel =
-    (level: string): Promise<Level> =>
-        Promise.all([
-            fetch(`/public/levels/${level}.json`)
-                .then((response) => response.json() as Promise<LevelSpec>),
-            loadBackgroundSprites()
-        ])
-            .then(([levelSpec, sprites]) => {
-                const compositor = new Compositor();
-                const tiles = createTiles(levelSpec.backgrounds);
+    async (name: string): Promise<Level> => {
+        const {
+            backgrounds,
+            spriteSheet
+        } = await loadJSON<LevelSpec>(`/public/levels/${name}.json`);
 
-                const tileResolver = new TileResolver(tiles);
-                const tileCollider = new TileCollider(tileResolver);
+        const sprites = await loadSpriteSheet(spriteSheet)
 
-                const level = new Level(compositor, tileCollider);
+        const compositor = new Compositor();
+        const tiles = createTiles(backgrounds);
 
-                const backgroundLayer = createBackgroundLayer(tiles, sprites);
-                const spriteLayer = createSpriteLayer(level.entities);
-                const collisionLayer = createCollisionLayer(level.entities, tileResolver);
+        const tileResolver = new TileResolver(tiles);
+        const tileCollider = new TileCollider(tileResolver);
 
-                compositor.addLayer(backgroundLayer);
-                compositor.addLayer(spriteLayer);
-                compositor.addLayer(collisionLayer);
+        const level = new Level(compositor, tileCollider);
 
-                return level;
-            });
+        const backgroundLayer = createBackgroundLayer(tiles, sprites);
+        const spriteLayer = createSpriteLayer(level.entities);
+        const collisionLayer = createCollisionLayer(level.entities, tileResolver);
+
+        compositor.addLayer(backgroundLayer);
+        compositor.addLayer(spriteLayer);
+        compositor.addLayer(collisionLayer);
+
+        return level;
+    }
