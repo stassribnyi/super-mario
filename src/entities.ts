@@ -10,7 +10,7 @@ export class Mario extends Entity {
     }
 
     draw(context: CanvasRenderingContext2D): void {
-        this.sprite.draw('idle', context, this.pos.x, this.pos.y);
+        this.sprite.draw('idle', context, 0, 0);
     }
 }
 

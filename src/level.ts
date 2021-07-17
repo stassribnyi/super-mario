@@ -1,9 +1,11 @@
+import Camera from './camera.js';
 import Compositor from './compositor.js';
 import Entity from './entity.js';
 import TileCollider from './tile-collider.js';
 
 export interface LevelTile {
     readonly name: string;
+    readonly type: string;
 }
 
 export default class Level {
@@ -12,8 +14,8 @@ export default class Level {
 
     constructor(private compositor: Compositor, private tileCollider: TileCollider) { }
 
-    draw(context: CanvasRenderingContext2D): void {
-        this.compositor.draw(context);
+    draw(context: CanvasRenderingContext2D, camera: Camera): void {
+        this.compositor.draw(context, camera);
     }
 
     update(deltaTime: number): void {

@@ -34,21 +34,39 @@ export const createBackgroundLayer = (
   sprites: SpriteSheet
 ): LayerDrawer => {
   const buffer = document.createElement('canvas');
-  buffer.width = 256;
+  buffer.width = 2048;
   buffer.height = 240;
 
   tiles.forEach((x, y, tile) =>
     sprites.drawTile(tile.name, buffer.getContext('2d'), x, y)
   );
 
-  return (context) => context.drawImage(buffer, 0, 0);
+  return (context, camera) => context.drawImage(buffer, -camera.pos.x, -camera.pos.y);
 };
 
 export const createSpriteLayer =
-  (entities: Level['entities']): LayerDrawer =>
-    (context) =>
-      entities.forEach(entity => entity.draw(context));
+  (entities: Level['entities'],
+    entityWidth: number = 16,
+    entityHeight: number = 16
+  ): LayerDrawer => {
+    const buffer = document.createElement('canvas');
+    buffer.width = entityWidth;
+    buffer.height = entityHeight;
+    const bufferContext = buffer.getContext('2d');
 
+    return (context, camera) =>
+      entities.forEach(entity => {
+        bufferContext.clearRect(0, 0, entityWidth, entityHeight);
+
+        entity.draw(bufferContext);
+
+        context.drawImage(
+          buffer,
+          entity.pos.x - camera.pos.x,
+          entity.pos.y - camera.pos.y
+        )
+      });
+  }
 export const createCollisionLayer =
   (entities: Set<Entity>, tileResolver: TileResolver): LayerDrawer => {
     const resolvedTiles = new Set<Vector>();
@@ -61,15 +79,27 @@ export const createCollisionLayer =
       return getByIndexOriginal.call(tileResolver, indexX, indexY);
     }
 
-    return (context) => {
+    return (context, camera) => {
       resolvedTiles.forEach(({ x, y }) => {
-        drawCollision(context, 'blue', x, y, tileSize);
+        drawCollision(
+          context,
+          'blue',
+          x - camera.pos.x,
+          y - camera.pos.y,
+          tileSize);
       });
 
       resolvedTiles.clear();
 
       entities.forEach(({ pos, size }) => {
-        drawCollision(context, 'red', pos.x, pos.y, size.x, size.y);
+        drawCollision(
+          context,
+          'red',
+          pos.x - camera.pos.x,
+          pos.y - camera.pos.y,
+          size.x,
+          size.y
+        );
       });
     }
   }

@@ -6,10 +6,14 @@ import { Matrix } from './math.js';
 import TileCollider from './tile-collider.js';
 import TileResolver from './tile-resolver.js';
 
-export type BackgroundRange = [number, number, number, number];
+export type BackgroundRange =
+    | [number, number]
+    | [number, number, number]
+    | [number, number, number, number];
 
 export interface Background {
     readonly tile: string;
+    readonly type: string;
     readonly ranges: Array<BackgroundRange>
 }
 export interface LevelSpec {
@@ -28,15 +32,34 @@ export const loadImage =
 const createTiles = (backgrounds: LevelSpec['backgrounds']): Matrix<LevelTile> => {
     const tiles = new Matrix<LevelTile>();
 
-    backgrounds.forEach(({ tile, ranges }) =>
-        ranges.forEach(([xStart, xEnd, yStart, yEnd]) => {
+    backgrounds.forEach(({ tile: name, type, ranges }) => {
+        const applyRange = ([xStart, xLen, yStart, yLen]) => {
+            const xEnd = xStart + xLen;
+            const yEnd = yStart + yLen;
+
             for (let x = xStart; x < xEnd; x++) {
                 for (let y = yStart; y < yEnd; y++) {
-                    tiles.set(x, y, { name: tile })
+                    tiles.set(x, y, { name, type })
                 }
             }
-        })
-    );
+        }
+
+        ranges.forEach((range) => {
+            if (range.length === 4) {
+                applyRange(range);
+
+                return;
+            }
+
+            if (range.length === 3) {
+                applyRange([...range, 1]);
+
+                return;
+            }
+
+            applyRange([range[0], 1, range[1], 1]);
+        });
+    });
 
     return tiles;
 }

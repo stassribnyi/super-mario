@@ -1,4 +1,6 @@
-export type LayerDrawer = (context: CanvasRenderingContext2D) => void;
+import Camera from './camera.js';
+
+export type LayerDrawer = (context: CanvasRenderingContext2D, camera: Camera) => void;
 
 export default class Compositor {
     private readonly layers = new Set<LayerDrawer>();
@@ -11,7 +13,7 @@ export default class Compositor {
         this.layers.delete(layer);
     }
 
-    draw(context: CanvasRenderingContext2D): void {
-        this.layers.forEach(layer => layer(context));
+    draw(context: CanvasRenderingContext2D, camera: Camera): void {
+        this.layers.forEach(layer => layer(context, camera));
     }
 }
