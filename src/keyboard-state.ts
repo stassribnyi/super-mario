@@ -33,12 +33,29 @@ export default class KeyboardState {
         element.addEventListener(eventName, this.handleEvent));
   }
 
+  repeatIfPressed(codes: string | Array<string>): void {
+    if (!codes.length) {
+      return;
+    }
+
+    const keysToRepeat = this.getKeysByState(KeyState.Pressed).filter(code => codes.includes(code));
+
+    if (!keysToRepeat.length) {
+      return;
+    }
+
+    keysToRepeat.forEach(code => {
+      this.keyMap.get(code)(KeyState.Pressed);
+    });
+  }
+
   private handleEvent = (event: WindowEventMap['keydown']): void => {
     if (!this.keyMap.has(event.code)) {
-      return
+      return;
     }
 
     event.preventDefault();
+
 
     const state = event.type === 'keydown' ? KeyState.Pressed : KeyState.Released;
 
@@ -48,5 +65,12 @@ export default class KeyboardState {
 
     this.keyStates.set(event.code, state);
     this.keyMap.get(event.code)(state);
+  }
+
+  private getKeysByState(state: KeyState): Array<string> {
+    return Array
+      .from(this.keyStates.entries())
+      .filter(([, currentState]) => currentState === state)
+      .map(([key]) => key);
   }
 }

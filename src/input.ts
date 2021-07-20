@@ -33,6 +33,8 @@ export const setupKeyboard = (entity: Entity) => {
         }
 
         entity?.run.cancel();
+
+        input.repeatIfPressed(['ArrowRight']);
     });
 
     input.addMapping('ArrowRight', (state) => {
@@ -43,6 +45,8 @@ export const setupKeyboard = (entity: Entity) => {
         }
 
         entity?.run.cancel();
+
+        input.repeatIfPressed(['ArrowLeft']);
     });
 
     return input;

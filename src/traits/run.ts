@@ -5,8 +5,10 @@ export enum Direction {
     Forward = 1
 }
 export default class Run extends Trait {
-    private speed = 0;
     private distance = 0;
+    private acceleration = 0;
+    private deceleration = 300;
+    private readonly dragFactor = 1 / 5000;
     private direction = Direction.Forward;
 
     constructor() {
@@ -15,17 +17,30 @@ export default class Run extends Trait {
 
     start(direction?: Direction): void {
         this.direction = direction || this.direction;
-        this.speed = 6000 * this.direction;
+        this.acceleration = 400 * this.direction;
     }
 
     cancel(): void {
-        this.speed = 0;
-        this.distance = 0;
+        this.acceleration = 0;
     }
 
     update(entity: Entity, deltaTime: number): void {
-        entity.vel.x = this.speed * deltaTime;
-        this.distance += Math.abs(entity.vel.x) * deltaTime;
+        const absX = Math.abs(entity.vel.x);
+
+        if (this.acceleration !== 0) {
+            entity.vel.x += this.acceleration * deltaTime;
+        } else if (absX !== 0) {
+            const decel = Math.min(absX, this.deceleration * deltaTime);
+
+            entity.vel.x += entity.vel.x > 0 ? -decel : decel;
+        } else {
+            this.distance = 0;
+        }
+
+        const drag = this.dragFactor * entity.vel.x * absX;
+        entity.vel.x -= drag;
+        this.distance += absX * deltaTime;
+
     }
 
     getDirection(): Direction {

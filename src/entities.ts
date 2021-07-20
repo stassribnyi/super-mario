@@ -2,15 +2,11 @@ import SpriteSheet from './sprite-sheet.js';
 import Entity from './entity.js';
 import { loadSpriteSheet } from './loaders.js';
 import { Direction, Jump, Run } from './traits/index.js';
-import { createAnimation, Animation } from './animation.js';
 
 export class Mario extends Entity {
-    private readonly runAnimation: Animation;
-
     constructor(private readonly sprite: SpriteSheet) {
         super();
         this.setSize(14, 16);
-        this.runAnimation = createAnimation(['run-1', 'run-2', 'run-3'], 10);
     }
 
     draw(context: CanvasRenderingContext2D): void {
@@ -22,12 +18,22 @@ export class Mario extends Entity {
 
     private getFrame(): string {
         const distance = this.run.getDistance();
+        const direction = this.run.getDirection();
+        const runAnimation = this.sprite.getAnimation('run');
 
-        if (distance) {
-            return this.runAnimation(distance);
+        if (this.jump.engageTime !== 0) {
+            return 'jump'
         }
 
-        return 'idle';
+        if (distance <= 0 || !runAnimation) {
+            return 'idle';
+        }
+
+        if (this.vel.x > 0 && direction < 0 || this.vel.x < 0 && direction > 0) {
+            return 'break';
+        }
+
+        return runAnimation(distance);
     }
 }
 

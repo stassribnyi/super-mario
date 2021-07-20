@@ -50,7 +50,7 @@ export const createBackgroundLayer = (
 
     startIndex = drawFrom;
     endIndex = drawTo;
-    console.log('redrawing');
+    // console.log('redrawing');
 
     for (let x = startIndex; x <= endIndex; x++) {
       const col = tiles.grid[x];

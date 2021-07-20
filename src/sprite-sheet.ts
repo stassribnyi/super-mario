@@ -10,6 +10,10 @@ export default class SpriteSheet {
         private height: number = 0
     ) { }
 
+    getAnimation(name: string): undefined | Animation {
+        return this.animations.get(name);
+    }
+
     define(name: string, x: number, y: number, width: number, height: number): void {
         const bufferTypes = [false, true] as const;
 

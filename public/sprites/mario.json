@@ -16,6 +16,21 @@
     {
       "name": "run-3",
       "position": [321, 44, 16, 16]
+    },
+    {
+      "name": "break",
+      "position": [337, 44, 16, 16]
+    },
+    {
+      "name": "jump",
+      "position": [353, 44, 16, 16]
+    }
+  ],
+  "animations": [
+    {
+      "name": "run",
+      "frames": ["run-1", "run-2", "run-3"],
+      "frameLength": 10
     }
   ]
 }
