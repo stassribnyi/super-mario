@@ -11,11 +11,16 @@ export interface LevelTile {
 export default class Level {
     readonly entities = new Set<Entity>();
     private gravity = 2000;
+    private totalTime = 0;
 
     constructor(private compositor: Compositor, private tileCollider: TileCollider) { }
 
     draw(context: CanvasRenderingContext2D, camera: Camera): void {
         this.compositor.draw(context, camera);
+    }
+
+    getTotalTime(): number {
+        return this.totalTime;
     }
 
     update(deltaTime: number): void {
@@ -30,5 +35,7 @@ export default class Level {
 
             entity.setVelocity(entity.vel.x, entity.vel.y + this.gravity * deltaTime);
         });
+
+        this.totalTime += deltaTime;
     }
 }

@@ -1,7 +1,6 @@
 import Entity, { Trait } from '../entity.js';
-
 export default class Jump extends Trait {
-    private velocity = 200;
+    private velocity = 250;
     private engageTime = 0;
     private readonly duration = 0.2;
 

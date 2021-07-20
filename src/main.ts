@@ -11,8 +11,7 @@ const context = canvas.getContext('2d');
 Promise.all([
     createMario(74, 50),
     loadLevel('1-1')
-]).then(([mario, level]) => {
-    const camera = new Camera();
+]).then(([mario, [level, camera]]) => {
     level.entities.add(mario);
 
     const input = setupKeyboard(mario);
@@ -23,6 +22,7 @@ Promise.all([
     const timer = new Timer();
 
     timer.setTick((deltaTime) => {
+        // camera.pos.x = mario.pos.x - Math.floor(camera.size.x / 2);
         level.update(deltaTime);
         level.draw(context, camera);
     });

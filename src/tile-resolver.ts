@@ -52,6 +52,10 @@ export default class TileResolver {
         }
     }
 
+    getTiles(): Matrix<LevelTile> {
+        return this.tiles;
+    }
+
     searchByPosition(positionX: number, positionY: number): ResolvedTile {
         return this.getByIndex(
             this.toIndex(positionX),
@@ -76,5 +80,4 @@ export default class TileResolver {
 
         return matches;
     }
-
 }

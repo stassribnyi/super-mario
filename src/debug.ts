@@ -22,8 +22,6 @@ export const setupMouseControl = (canvas: HTMLCanvasElement, entity: Entity, cam
                     camera.pos.x - (event.clientX - lastEvent.clientX),
                     camera.pos.y
                 );
-
-
             }
 
             lastEvent = event;

@@ -1,5 +1,6 @@
 import Entity from './entity.js'
 import KeyboardState, { KeyState } from './keyboard-state.js';
+import { Direction } from './traits/index.js';
 
 export const setupKeyboard = (entity: Entity) => {
     const input = new KeyboardState();
@@ -26,7 +27,7 @@ export const setupKeyboard = (entity: Entity) => {
 
     input.addMapping('ArrowLeft', (state) => {
         if (state === KeyState.Pressed) {
-            entity?.run.start('backward');
+            entity?.run.start(Direction.Backward);
 
             return;
         }
@@ -36,7 +37,7 @@ export const setupKeyboard = (entity: Entity) => {
 
     input.addMapping('ArrowRight', (state) => {
         if (state === KeyState.Pressed) {
-            entity?.run.start('forward');
+            entity?.run.start(Direction.Forward);
 
             return;
         }

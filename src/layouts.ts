@@ -1,3 +1,4 @@
+import Camera from './camera.js';
 import { LayerDrawer } from './compositor.js';
 import Entity from './entity.js';
 import Level, { LevelTile } from './level.js';
@@ -5,19 +6,19 @@ import { Matrix, Vector } from './math.js';
 import SpriteSheet from './sprite-sheet.js';
 import TileResolver from './tile-resolver.js';
 
-function drawCollision(
+function drawRect(
   context: CanvasRenderingContext2D,
   color: CanvasRenderingContext2D['strokeStyle'],
   x: number, y: number,
   size: number
 ): void;
-function drawCollision(
+function drawRect(
   context: CanvasRenderingContext2D,
   color: CanvasRenderingContext2D['strokeStyle'],
   x: number, y: number,
   width: number, height: number
 ): void;
-function drawCollision(
+function drawRect(
   context: CanvasRenderingContext2D,
   color: CanvasRenderingContext2D['strokeStyle'],
   x: number, y: number,
@@ -30,18 +31,54 @@ function drawCollision(
 }
 
 export const createBackgroundLayer = (
-  tiles: Matrix<LevelTile>,
+  level: Level,
+  tileResolver: TileResolver,
   sprites: SpriteSheet
 ): LayerDrawer => {
+  const tiles = tileResolver.getTiles();
   const buffer = document.createElement('canvas');
-  buffer.width = 2048;
+  buffer.width = 256 + 16;
   buffer.height = 240;
+  const bufferContext = buffer.getContext('2d');
 
-  tiles.forEach((x, y, tile) =>
-    sprites.drawTile(tile.name, buffer.getContext('2d'), x, y)
-  );
+  let startIndex: number;
+  let endIndex: number;
+  const redraw = (drawFrom: number, drawTo: number): void => {
+    // if (startIndex === drawFrom && endIndex === drawTo) {
+    //   return;
+    // }
 
-  return (context, camera) => context.drawImage(buffer, -camera.pos.x, -camera.pos.y);
+    startIndex = drawFrom;
+    endIndex = drawTo;
+    console.log('redrawing');
+
+    for (let x = startIndex; x <= endIndex; x++) {
+      const col = tiles.grid[x];
+      if (!col) {
+        continue;
+      }
+
+      col.forEach((tile, y) => {
+        if (sprites.hasAnimation(tile.name)) {
+          sprites.drawAnimation(tile.name, bufferContext, x - startIndex, y, level.getTotalTime());
+
+          return;
+        }
+
+        sprites.drawTile(tile.name, bufferContext, x - startIndex, y);
+      })
+    }
+  }
+
+  return (context, camera) => {
+    const drawWidth = tileResolver.toIndex(camera.size.x);
+    const drawFrom = tileResolver.toIndex(camera.pos.x);
+    const drawTo = drawFrom + drawWidth;
+
+    redraw(drawFrom, drawTo);
+
+    context.drawImage(buffer, -camera.pos.x % tileResolver.tileSize, -camera.pos.y);
+  }
 };
 
 export const createSpriteLayer =
@@ -66,7 +103,8 @@ export const createSpriteLayer =
           entity.pos.y - camera.pos.y
         )
       });
-  }
+  };
+
 export const createCollisionLayer =
   (entities: Set<Entity>, tileResolver: TileResolver): LayerDrawer => {
     const resolvedTiles = new Set<Vector>();
@@ -81,7 +119,7 @@ export const createCollisionLayer =
 
     return (context, camera) => {
       resolvedTiles.forEach(({ x, y }) => {
-        drawCollision(
+        drawRect(
           context,
           'blue',
           x - camera.pos.x,
@@ -92,7 +130,7 @@ export const createCollisionLayer =
       resolvedTiles.clear();
 
       entities.forEach(({ pos, size }) => {
-        drawCollision(
+        drawRect(
           context,
           'red',
           pos.x - camera.pos.x,
@@ -102,4 +140,16 @@ export const createCollisionLayer =
         );
       });
     }
+  };
+
+export const createCameraLayer =
+  (cameraToDraw: Camera): LayerDrawer => (context, fromCamera) => {
+    drawRect(
+      context,
+      'purple',
+      cameraToDraw.pos.x - fromCamera.pos.x,
+      cameraToDraw.pos.y - fromCamera.pos.y,
+      cameraToDraw.size.x,
+      cameraToDraw.size.y);
+
   }

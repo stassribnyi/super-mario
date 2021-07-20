@@ -1,0 +1,21 @@
+{
+  "imageUrl": "/public/img/characters.gif",
+  "tiles": [
+    {
+      "name": "idle",
+      "position": [276, 44, 16, 16]
+    },
+    {
+      "name": "run-1",
+      "position": [290, 44, 16, 16]
+    },
+    {
+      "name": "run-2",
+      "position": [304, 43, 16, 16]
+    },
+    {
+      "name": "run-3",
+      "position": [321, 44, 16, 16]
+    }
+  ]
+}

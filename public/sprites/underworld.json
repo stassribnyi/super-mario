@@ -1,7 +1,7 @@
 {
   "imageUrl": "/public/img/tiles.png",
-  "tileWidth": 16,
-  "tileHeight": 16,
+  "width": 16,
+  "height": 16,
   "tiles": [
     { "name": "ground", "position": [0, 2] },
     { "name": "sky", "position": [13, 3] }

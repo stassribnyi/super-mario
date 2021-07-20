@@ -1,5 +1,4 @@
 import Jump from './jump.js';
-import Run from './run.js';
-import Velocity from './velocity.js';
+import Run, { Direction } from './run.js';
 
-export { Jump, Run, Velocity };
+export { Direction, Jump, Run };
