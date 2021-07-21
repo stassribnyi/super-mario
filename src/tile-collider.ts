@@ -1,4 +1,4 @@
-import Entity from './entity.js';
+import Entity, { ObstructSide } from './entity.js';
 import { Vector } from './math.js';
 import TileResolver from './tile-resolver.js';
 
@@ -9,6 +9,10 @@ export default class TileCollider {
         if (!entity.vel[ordinate]) {
             return;
         }
+
+        const obstructionSides = ordinate === 'x'
+            ? [ObstructSide.Right, ObstructSide.Left]
+            : [ObstructSide.Bottom, ObstructSide.Top];
 
         const ordinateValue = entity.vel[ordinate] > 0
             ? entity.pos[ordinate] + entity.size[ordinate]
@@ -32,11 +36,15 @@ export default class TileCollider {
                 if (entity.pos[ordinate] + entity.size[ordinate] > match[matchOrdinateOne]) {
                     entity.pos[ordinate] = match[matchOrdinateOne] - entity.size[ordinate];
                     entity.vel[ordinate] = 0;
+
+                    entity.obstruct(obstructionSides[0]);
                 }
             } else if (entity.vel[ordinate] < 0) {
                 if (entity.pos[ordinate] < match[matchOrdinateTwo]) {
                     entity.pos[ordinate] = match[matchOrdinateTwo];
                     entity.vel[ordinate] = 0;
+
+                    entity.obstruct(obstructionSides[1]);
                 }
             }
         })

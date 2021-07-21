@@ -1,5 +1,5 @@
 import SpriteSheet from './sprite-sheet.js';
-import Entity from './entity.js';
+import Entity, { ObstructSide } from './entity.js';
 import { loadSpriteSheet } from './loaders.js';
 import { Direction, Jump, Run } from './traits/index.js';
 
@@ -7,6 +7,15 @@ export class Mario extends Entity {
     constructor(private readonly sprite: SpriteSheet) {
         super();
         this.setSize(14, 16);
+        this.obstructHandler = (side) => {
+            if (side === ObstructSide.Bottom) {
+                this.jump.reset();
+            }
+
+            if (side === ObstructSide.Top) {
+                this.jump.cancel();
+            }
+        }
     }
 
     draw(context: CanvasRenderingContext2D): void {

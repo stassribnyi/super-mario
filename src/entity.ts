@@ -1,5 +1,12 @@
 import { Vector } from './math.js';
 
+export enum ObstructSide {
+    Top = 'top',
+    Right = 'right',
+    Bottom = 'bottom',
+    Left = 'left'
+}
+
 export abstract class Trait {
     [key: string]: any;
 
@@ -12,6 +19,7 @@ export default abstract class Entity {
     [key: string]: any;
 
     private readonly traits = new Map<Trait['name'], Trait>();
+    protected obstructHandler: (side: ObstructSide) => void;
 
     readonly pos = new Vector(0, 0);
     readonly vel = new Vector(0, 0);
@@ -22,6 +30,10 @@ export default abstract class Entity {
     addTrait(trait: Trait): void {
         this.traits.set(trait.name, trait)
         this[trait.name] = trait;
+    }
+
+    obstruct(side: ObstructSide): void {
+        this.obstructHandler?.(side);
     }
 
     setPosition(x: number, y: number): void {

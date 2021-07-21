@@ -30,9 +30,9 @@ export default class Run extends Trait {
         if (this.acceleration !== 0) {
             entity.vel.x += this.acceleration * deltaTime;
         } else if (absX !== 0) {
-            const decel = Math.min(absX, this.deceleration * deltaTime);
+            const decelerateX = Math.min(absX, this.deceleration * deltaTime);
 
-            entity.vel.x += entity.vel.x > 0 ? -decel : decel;
+            entity.vel.x += entity.vel.x > 0 ? -decelerateX : decelerateX;
         } else {
             this.distance = 0;
         }
@@ -40,7 +40,6 @@ export default class Run extends Trait {
         const drag = this.dragFactor * entity.vel.x * absX;
         entity.vel.x -= drag;
         this.distance += absX * deltaTime;
-
     }
 
     getDirection(): Direction {
