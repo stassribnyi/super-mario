@@ -10,7 +10,7 @@ export interface LevelTile {
 
 export default class Level {
     readonly entities = new Set<Entity>();
-    private gravity = 2000;
+    private gravity = 1500;
     private totalTime = 0;
 
     constructor(private compositor: Compositor, private tileCollider: TileCollider) { }

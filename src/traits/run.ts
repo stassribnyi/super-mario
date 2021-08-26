@@ -4,24 +4,49 @@ export enum Direction {
     Backward = -1,
     Forward = 1
 }
+
+const WALK_DRAG_FACTOR = 1 / 1000;
+const RUN_DRAG_FACTOR = 1 / 1000;
+
 export default class Run extends Trait {
-    private distance = 0;
+    private _distance = 0;
+    private _direction = Direction.Forward;
+
     private acceleration = 0;
     private deceleration = 300;
-    private readonly dragFactor = 1 / 5000;
-    private direction = Direction.Forward;
+    private dragFactor = WALK_DRAG_FACTOR;
 
     constructor() {
         super('run')
     }
 
+    get direction(): Direction {
+        return this._direction;
+    }
+
+    private set direction(value: Direction) {
+        this._direction = value;
+    }
+
+    get distance(): number {
+        return this._distance;
+    }
+
+    private set distance(value: number) {
+        this._distance = value;
+    }
+
     start(direction?: Direction): void {
-        this.direction = direction || this.direction;
-        this.acceleration = 400 * this.direction;
+        this._direction = direction || this._direction;
+        this.acceleration = 400 * this._direction;
     }
 
     cancel(): void {
         this.acceleration = 0;
+    }
+
+    turbo(isBoost: boolean) {
+        this.dragFactor = isBoost ? RUN_DRAG_FACTOR : WALK_DRAG_FACTOR;
     }
 
     update(entity: Entity, deltaTime: number): void {
@@ -40,13 +65,5 @@ export default class Run extends Trait {
         const drag = this.dragFactor * entity.vel.x * absX;
         entity.vel.x -= drag;
         this.distance += absX * deltaTime;
-    }
-
-    getDirection(): Direction {
-        return this.direction;
-    }
-
-    getDistance(): number {
-        return this.distance;
     }
 }

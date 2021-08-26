@@ -1,36 +1,32 @@
 import SpriteSheet from './sprite-sheet.js';
-import Entity, { ObstructSide } from './entity.js';
+import Entity from './entity.js';
 import { loadSpriteSheet } from './loaders.js';
 import { Direction, Jump, Run } from './traits/index.js';
 
 export class Mario extends Entity {
+    private direction = Direction.Forward;
+
     constructor(private readonly sprite: SpriteSheet) {
         super();
         this.setSize(14, 16);
-        this.obstructHandler = (side) => {
-            if (side === ObstructSide.Bottom) {
-                this.jump.reset();
-            }
-
-            if (side === ObstructSide.Top) {
-                this.jump.cancel();
-            }
-        }
     }
 
     draw(context: CanvasRenderingContext2D): void {
-        const direction = this.run.getDirection();
-        const isMirrored = direction === Direction.Backward;
+        if (!this.jump?.isFalling) {
+            this.direction = this.run?.direction;
+        }
+
+        const isMirrored = this.direction === Direction.Backward;
 
         this.sprite.draw(this.getFrame(), context, 0, 0, isMirrored);
     }
 
     private getFrame(): string {
-        const distance = this.run.getDistance();
-        const direction = this.run.getDirection();
+        const distance = this.run?.distance;
+        const direction = this.run?.direction;
         const runAnimation = this.sprite.getAnimation('run');
 
-        if (this.jump.engageTime !== 0) {
+        if (this.jump?.isFalling) {
             return 'jump'
         }
 

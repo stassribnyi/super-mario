@@ -25,6 +25,17 @@ export const setupKeyboard = (entity: Entity) => {
         entity?.jump.cancel();
     });
 
+    input.addMapping('ShiftLeft', (state) => {
+        if (state === KeyState.Pressed) {
+            entity.run.dragFactor = 1 / 5000;
+
+            return;
+        }
+
+        entity.run.dragFactor = 1 / 1000;
+    });
+
+
     input.addMapping('ArrowLeft', (state) => {
         if (state === KeyState.Pressed) {
             entity?.run.start(Direction.Backward);

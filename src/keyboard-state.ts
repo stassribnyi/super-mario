@@ -6,6 +6,7 @@ export enum KeyState {
 type KeydownEventHandler = (state: KeyState) => void;
 type KeyboardCode =
   | 'Space'
+  | 'ShiftLeft'
   | 'ArrowUp'
   | 'ArrowLeft'
   | 'ArrowRight';
